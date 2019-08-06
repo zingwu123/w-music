@@ -1,33 +1,45 @@
 <template>
   <div class="singer" ref="singer">
-    <list-view :data="this.singerList"  ref="list"></list-view>
-
+    <list-view :data="this.singers" @select="selectSinger" ref="list"></list-view>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import { getSinger } from 'api/singer'
 import Singer from 'common/js/singer'
 import ListView from 'base/list-view/list-view'
+import {getSingers} from 'src/api/singer'
+import {playlistMixin} from 'common/js/mixin'
+import {mapMutations} from 'vuex'
 
 const pinyin = require('pinyin')
 const HOT_NAME = '热门'
 const HOT_SINGERS = 10
+
 export default {
-  data() {
+  mixins: [playlistMixin],
+  data () {
     return {
-      singerList: []
+      singers: []
     }
   },
-  components: {
-    ListView
-  },
-  created() {
-    this._getSinger()
+  created () {
+    this._getSingers()
   },
   methods: {
-    _getSinger() {
-      getSinger().then((res) => {
+    selectSinger (singer) {
+      this.$router.push({
+        path: `/singer/${singer.id}`
+      })
+      this.setSinger(singer)
+    },
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.singer.style.bottom = bottom
+      this.$refs.list.refresh()
+    },
+    _getSingers () {
+      getSingers().then((res) => {
         let s = res.data.artists
         s.map((item) => {
           let py = pinyin(item.name[0], {
@@ -35,7 +47,7 @@ export default {
           })
           item.initial = py[0][0].toUpperCase()
         })
-        this.singerList = this._normalizeSinger(s)
+        this.singers = this._normalizeSinger(s)
       })
     },
     _normalizeSinger (list) {
@@ -73,7 +85,7 @@ export default {
       let ret = []
       for (const key in map) {
         let val = map[key]
-        if (val.title.match(/[a-zA-Z]/)) {
+        if (val.title.match(/[A-Z]/)) {
           ret.push(val)
         } else if (val.title === HOT_NAME) {
           hot.push(val)
@@ -84,20 +96,21 @@ export default {
       })
       return hot.concat(ret)
     },
-    handlePlaylist (playlist) {
-      const bottom = playlist.length > 0 ? '60px' : ''
-      this.$refs.singer.style.bottom = bottom
-      this.$refs.list.refresh()
-    }
+    ...mapMutations({
+      setSinger: 'SET_SINGER'
+    })
+  },
+  components: {
+    ListView
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.singer {
-  position: fixed;
-  top: 88px;
-  bottom: 0;
-  width: 100%;
-}
+ .singer {
+    position: fixed;
+    top: 88px;
+    bottom: 0;
+    width: 100%;
+ }
 </style>

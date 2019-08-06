@@ -1,6 +1,7 @@
 
+// 构造歌曲数据对象
 export default class Song {
-  constructor ({id, mid, singer, name, album, duration, image, url, aliaName}) {
+  constructor ({id, singer, name, album, image, aliaName}) {
     this.id = id
     this.singer = singer
     this.name = name

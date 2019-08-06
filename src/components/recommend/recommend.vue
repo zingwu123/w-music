@@ -18,7 +18,7 @@
                 <img :src="item.picUrl"/>
               </div>
               <p class="play-count">
-                <i class="iconfont icon-listeningVolume"></i>
+                <i class="iconfont icon-listeningvolume"></i>
                 {{Math.floor(item.playCount / 10000) }}万
               </p>
               <div class="text">

@@ -36,7 +36,7 @@
           :class="{'current': currentIndex === index}"
         >{{ item }}</li>
       </ul>
-    </div>s
+    </div>
   </scroll>
 </template>
 
