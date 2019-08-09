@@ -1,10 +1,10 @@
 <template>
-  <div class="recommend">
-    <scroll class="recommend-content" :data="playList">
+  <div class="recommend" ref="recommend">
+    <scroll class="recommend-content" ref="scroll" :data="playList">
       <div>
         <div v-if="banner.length" class="slider-wrapper">
           <slider>
-            <div v-for="item in banner" :key="item.id">
+            <div v-for="item in banner" :key="item.id" @click.stop="selectBanner(item)">
               <img :src="item.imageUrl" />
             </div>
           </slider>
@@ -13,7 +13,7 @@
           <h1 class="title">推荐歌单</h1>
           <ul>
             <li class="item" v-for="item in playList" :key="item.id">
-              <div class="icon">
+              <div class="icon"  @click="selectList(item)">
                 <div class="gradients"></div>
                 <img :src="item.picUrl"/>
               </div>
@@ -30,7 +30,7 @@
         <div class="recommend-song" ref="recommendSong">
           <h1 class="title">推荐歌曲</h1>
           <ul>
-            <li class="item" v-for="item in recommendMusic" :key="item.id">
+            <li class="item" v-for="item in recommendMusic" :key="item.id"  @click="selectSong(item)">
               <div class="icon">
                 <img :src="item.image"/>
               </div>
@@ -41,6 +41,7 @@
         </div>
       </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -48,9 +49,13 @@
 import Scroll from 'base/scroll/scroll'
 import Slider from 'base/slider/slider'
 import { ERR_OK } from 'common/js/config'
-import { getBanner, getRecommendList, getRecommendMusic } from 'api/recommond'
+import { getBanner, getRecommendList, getRecommendMusic } from 'api/recommend'
 import { createRecommendSong } from 'common/js/song'
+import { getSongDetail } from 'api/search'
+import { mapMutations, mapActions } from 'vuex'
+import { playlistMixin } from 'common/js/mixin'
 export default {
+  mixins: [playlistMixin],
   data() {
     return {
       banner: [], // 初始化轮播图
@@ -75,6 +80,7 @@ export default {
         if (res.status === ERR_OK) {
           let data = res.data.banners
           this.banner = data
+          this.banner = data.splice(4)
         } else {
           console.error('Banner 获取失败')
         }
@@ -105,7 +111,53 @@ export default {
           console.error('getRecommendMusic 获取失败')
         }
       })
-    }
+    },
+    // 添加轮播图对应音乐到播放器
+    selectBanner(item) {
+      // let regHttp = /^http/
+      // let regSong = /\/song\/?id/
+      // if (regHttp.test(item.url)) {
+      //   window.open(item.url)
+      // }
+      // if (regSong.test(item.url)) {
+      if (item.url) {
+        window.open(item.url)
+      } else {
+        getSongDetail(item.targetId).then(res => {
+          if (res.status === ERR_OK) {
+            let m = res.data.songs[0]
+            let song = {
+              id: m.id,
+              singer: m.ar[0].name,
+              name: m.name,
+              image: m.al.picUrl,
+              album: m.al.name
+            }
+            this.insertSong(song)
+            this.setFullScreen(true)
+          }
+        })
+      }
+    },
+    selectSong(item) {
+      this.insertSong(item)
+    },
+    handlePlaylist(playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.recommend.style.bottom = bottom
+      this.$refs.scroll.refresh()
+    },
+    selectList(item) {
+      this.$router.push({
+        path: `/recommend/${item.id}`
+      })
+      this.setMuiscList(item)
+    },
+    ...mapMutations({
+      setMuiscList: 'SET_MUSIC_LIST',
+      setFullScreen: 'SET_FULL_SCREEN'
+    }),
+    ...mapActions(['insertSong'])
   }
 }
 </script>

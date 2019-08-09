@@ -34,7 +34,6 @@ export const currentSong = (state) => {
 
 export const currentSongUrl = (state) => {
   getSong(state.playlist[state.currentIndex]).then((res) => {
-    console.log(state.playlist, 'res')
     return res.data.data.url || ''
   })
 }

@@ -53,7 +53,6 @@ export const playerMixin = {
   methods: {
     changeMode () {
       const mode = (this.mode + 1) % 3
-      console.log(this.mode)
       this.setPlayMode(mode)
       let list = null
       if (mode === playMode.random) {
@@ -69,7 +68,7 @@ export const playerMixin = {
         // 返回 index
         return item.id === this.currentSong.id
       })
-      console.log('index', index)
+
       this.setCurrentIndex(index)
     },
     getFavoriteIcon (song) {

@@ -1,5 +1,5 @@
 <template>
-<transition name="slide" mode="out-in">
+<transition name="slide">
   <div class="music-list">
     <div class="header" ref="header">
       <div class="back" @click="back">
@@ -13,17 +13,16 @@
     @scroll="scroll"
     :probe-type="probeType"
     :listen-scroll="listenScroll"
-    :data="listDetail"
     ref="list">
       <div class="music-list-wrapper">
         <div class="bg-image" :style="bgStyle" ref="bgImage">
           <div class="filter"></div>
           <div class="text">
-            <h2 class="list-title">{{title}}</h2>
-            <p class="play-count" v-if="playCount">
-              <i class="iconfont icon-listeningvolume"></i>
-              {{playCount}}
-            </p>
+            <h2 class="list-title">
+              <!-- <p class="music">云音乐</p> -->
+              {{title}}
+            </h2>
+            <p class="update">{{updateTime}}</p>
           </div>
         </div>
         <div class="song-list-wrapper">
@@ -35,9 +34,9 @@
           <song-list @select="selectItem" :songs="listDetail"></song-list>
         </div>
       </div>
+      <div v-show="!listDetail.length" class="loading-content">
+      </div>
     </scroll>
-    <div v-show="!listDetail.length" class="loading-content">
-    </div>
   </div>
 </transition>
 </template>
@@ -46,10 +45,8 @@
 import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'
 import {mapGetters, mapActions} from 'vuex'
-import {getRecommendListDetail} from 'api/recommend'
-import {ERR_OK} from 'common/js/config'
-import {createRecommendListSong} from 'common/js/song'
 import {playlistMixin} from 'common/js/mixin'
+import {createSong} from 'common/js/song'
 
 const RESERVED_HEIGHT = 44
 
@@ -59,11 +56,15 @@ export default {
     return {
       listDetail: [],
       scrollY: 0,
-      headerTitle: '歌单'
+      node: null,
+      headerTitle: '排行榜'
     }
   },
   created () {
-    this._getRecommendListDetail(this.musicList.id)
+    if (!this.topList.id) {
+      this.$router.push('/rank')
+    }
+    this._normalizeSongs(this.topList.tracks)
     this.probeType = 3
     this.listenScroll = true
   },
@@ -72,24 +73,23 @@ export default {
     this.minTranslateY = -this.imageHeight + RESERVED_HEIGHT
   },
   computed: {
-    playCount () {
-      if (!this.musicList.playCount) {
-        return
-      }
-      if (this.musicList.playCount < 1e5) {
-        return Math.floor(this.musicList.playCount)
-      } else {
-        return Math.floor(this.musicList.playCount / 10000) + '万'
-      }
+    headerTitleTouchDown () {
+      return this.topList.name
     },
     bgStyle () {
-      return `background-image: url(${this.musicList.picUrl})`
+      return `background-image: url(${this.topList.coverImgUrl})`
     },
     title () {
-      return this.musicList.name
+      return this.headerTitleTouchDown
+    },
+    updateTime () {
+      let time = new Date(this.topList.updateTime)
+      let month = time.getMonth() + 1
+      let day = time.getDate()
+      return `最近更新:${month}月${day}日`
     },
     ...mapGetters([
-      'musicList'
+      'topList'
     ])
   },
   methods: {
@@ -97,6 +97,17 @@ export default {
       const bottom = playlist.length > 0 ? '60px' : ''
       this.$refs.list.$el.style.bottom = bottom
       this.$refs.list.refresh()
+    },
+    _normalizeSongs (list) {
+      if (!this.topList.id) {
+        this.$router.push('/rank')
+        return
+      }
+      let ret = []
+      list.forEach((item) => {
+        ret.push(createSong(item))
+      })
+      this.listDetail = ret
     },
     selectItem (item, index) {
       this.selectPlay({
@@ -109,21 +120,6 @@ export default {
     },
     back () {
       this.$router.back()
-    },
-    _getRecommendListDetail (id) {
-      if (!id) {
-        this.$router.push('/recommend')
-        return
-      }
-      getRecommendListDetail(id).then((res) => {
-        if (res.status === ERR_OK) {
-          this.listDetail = res.data.playlist.tracks.map((item) => {
-            return createRecommendListSong(item)
-          })
-        } else {
-          console.error('getRecommendListDetail 获取失败！')
-        }
-      })
     },
     sequence () {
       let list = this.listDetail
@@ -140,9 +136,9 @@ export default {
     scrollY (newY) {
       const percent = Math.abs(newY / this.imageHeight)
       if (newY < (this.minTranslateY + RESERVED_HEIGHT - 20)) {
-        this.headerTitle = this.musicList.name
+        this.headerTitle = this.headerTitleTouchDown
       } else {
-        this.headerTitle = '歌单'
+        this.headerTitle = '歌手'
       }
       if (newY < 0) {
         this.$refs.header.style.background = `rgba(212, 68, 57, ${percent})`
@@ -159,8 +155,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "common/scss/variable.scss";
-@import "common/scss/mixin.scss";
+@import "~common/scss/variable";
+@import "~common/scss/mixin";
 .slide-enter-active, .slide-leave-active {
   transition: all 0.2s
 }
@@ -171,7 +167,7 @@ export default {
 
 .music-list {
   position: fixed;
-  z-index: 1000;
+  z-index: 100;
   top: 0;
   left: 0;
   bottom: 0;
@@ -230,20 +226,31 @@ export default {
           width: 80%;
           height: 40px;
           bottom: 50px;
-          left: 15px;
+          left: 20px;
           color: #fff;
-          .play-count {
-            position: absolute;
-            bottom: -16px;
-            font-size: $font-size-small;
-          }
           .list-title {
             position: absolute;
             bottom: 0;
-            font-size: $font-size-medium-x;
+            font-style: italic;
+            font-size: $font-size-large;
             line-height: 18px;
             font-weight: bold;
             letter-spacing: 1px;
+            .music {
+              position: absolute;
+              top: -20px;
+              left: 5px;
+              font-style: italic;
+              font-weight: bold;
+              font-size: $font-size-medium;
+            }
+          }
+          .update {
+            position: absolute;
+            top: 45px;
+            left: 7px;
+            line-height: 14px;
+            font-size: $font-size-small;
           }
         }
       }
@@ -277,15 +284,6 @@ export default {
           }
         }
       }
-      // position: fixed;
-      // top: 0;
-      // bottom: 0;
-      // width: 100%;
-      // background: $color-background;
-      // height: 100%;
-      // z-index: 20;
-      // overflow: hidden;
-        // padding: 5px 0 20px 0;
     }
   }
   .loading-content {
