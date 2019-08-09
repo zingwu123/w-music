@@ -1,51 +1,52 @@
 <template>
-<transition name="slide">
-  <div class="music-list">
-    <div class="header" ref="header">
-      <div class="back" @click="back">
-        <i class="iconfont icon-back"></i>
+  <transition name="slide">
+    <div class="music-list">
+      <div class="header" ref="header">
+        <div class="back" @click="back">
+          <i class="iconfont icon-back"></i>
+        </div>
+        <div class="text">
+          <h1 class="title">{{headerTitle}}</h1>
+        </div>
       </div>
-      <div class="text">
-        <h1 class="title">{{headerTitle}}</h1>
-      </div>
+      <scroll
+        class="list"
+        @scroll="scroll"
+        :probe-type="probeType"
+        :listen-scroll="listenScroll"
+        :data="songs"
+        ref="list"
+      >
+        <div class="music-list-wrapper">
+          <div class="bg-image" :style="bgStyle" ref="bgImage">
+            <div class="filter"></div>
+            <div class="text">
+              <h2 class="list-title">{{title}}</h2>
+            </div>
+          </div>
+          <div class="song-list-wrapper">
+            <div class="sequence-play" v-show="listDetail.length" @click="sequence">
+              <i class="iconfont icon-play"></i>
+              <span class="text">播放全部</span>
+              <span class="count">(共{{listDetail.length}}首)</span>
+            </div>
+            <song-list @select="selectItem" :songs="listDetail"></song-list>
+          </div>
+        </div>
+        <div class="loading-content"></div>
+      </scroll>
     </div>
-    <scroll class="list"
-    @scroll="scroll"
-    :probe-type="probeType"
-    :listen-scroll="listenScroll"
-    :data="songs"
-    ref="list">
-      <div class="music-list-wrapper">
-        <div class="bg-image" :style="bgStyle" ref="bgImage">
-          <div class="filter"></div>
-          <div class="text">
-            <h2 class="list-title">{{title}}</h2>
-          </div>
-        </div>
-        <div class="song-list-wrapper">
-          <div class="sequence-play" v-show="listDetail.length" @click="sequence">
-            <i class="iconfont icon-play"></i>
-            <span class="text">播放全部</span>
-            <span class="count">(共{{listDetail.length}}首)</span>
-          </div>
-          <song-list @select="selectItem" :songs="listDetail"></song-list>
-        </div>
-      </div>
-      <div class="loading-content">
-      </div>
-    </scroll>
-  </div>
-</transition>
+  </transition>
 </template>
 
 <script>
 import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'
-import {mapGetters, mapActions} from 'vuex'
-import {ERR_OK} from 'common/js/config'
-import {playlistMixin} from 'common/js/mixin'
-import {getSingerDetail} from 'api/singer'
-import {createSong} from 'common/js/song'
+import { mapGetters, mapActions } from 'vuex'
+import { ERR_OK } from 'common/js/config'
+import { playlistMixin } from 'common/js/mixin'
+import { getSingerDetail } from 'api/singer'
+import { createSong } from 'common/js/song'
 
 const RESERVED_HEIGHT = 44
 
@@ -56,7 +57,7 @@ export default {
       type: Array
     }
   },
-  data () {
+  data() {
     return {
       listDetail: [],
       scrollY: 0,
@@ -64,17 +65,17 @@ export default {
       headerTitle: '歌手'
     }
   },
-  created () {
+  created() {
     this._getDetail()
     this.probeType = 3
     this.listenScroll = true
   },
-  mounted () {
+  mounted() {
     this.imageHeight = this.$refs.bgImage.clientHeight
     this.minTranslateY = -this.imageHeight + RESERVED_HEIGHT
   },
   computed: {
-    headerTitleTouchDown () {
+    headerTitleTouchDown() {
       let name = ''
       if (this.singer.aliaName) {
         name = this.singer.name + ` (${this.singer.aliaName})`
@@ -83,70 +84,65 @@ export default {
       }
       return name
     },
-    bgStyle () {
+    bgStyle() {
       return `background-image: url(${this.singer.avatar})`
     },
-    title () {
+    title() {
       return this.headerTitleTouchDown
     },
-    ...mapGetters([
-      'singer'
-    ])
+    ...mapGetters(['singer'])
   },
   methods: {
-    handlePlaylist (playlist) {
+    handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
       this.$refs.list.$el.style.bottom = bottom
       this.$refs.list.refresh()
     },
-    _getDetail () {
+    _getDetail() {
       if (!this.singer.id) {
         this.$router.push('/singer')
       }
-      getSingerDetail(this.singer.id).then((res) => {
+      getSingerDetail(this.singer.id).then(res => {
         if (res.status === ERR_OK) {
           this.node = res.data.hotSongs
         }
       })
     },
-    _normalizeSongs (list) {
+    _normalizeSongs(list) {
       let ret = []
-      list.forEach((item) => {
+      list.forEach(item => {
         ret.push(createSong(item))
       })
       return ret
     },
-    selectItem (item, index) {
+    selectItem(item, index) {
       this.selectPlay({
         list: this.listDetail,
         index: index
       })
     },
-    scroll (pos) {
+    scroll(pos) {
       this.scrollY = pos.y
     },
-    back () {
+    back() {
       this.$router.back()
     },
-    sequence () {
+    sequence() {
       let list = this.listDetail
       this.sequencePlay({
         list: list
       })
     },
-    ...mapActions([
-      'selectPlay',
-      'sequencePlay'
-    ])
+    ...mapActions(['selectPlay', 'sequencePlay'])
   },
   watch: {
-    node (val) {
+    node(val) {
       this.listDetail = this._normalizeSongs(val)
     },
-    scrollY (newY) {
+    scrollY(newY) {
       // let translateY = Math.max(this.minTranslateY, newY)
       const percent = Math.abs(newY / this.imageHeight)
-      if (newY < (this.minTranslateY + RESERVED_HEIGHT - 20)) {
+      if (newY < this.minTranslateY + RESERVED_HEIGHT - 20) {
         this.headerTitle = this.headerTitleTouchDown
       } else {
         this.headerTitle = '歌手'
@@ -168,10 +164,12 @@ export default {
 <style lang="scss" scoped>
 @import "~common/scss/variable";
 @import "~common/scss/mixin";
-.slide-enter-active, .slide-leave-active {
-  transition: all 0.2s
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.2s;
 }
-.slide-enter, .slide-leave-to {
+.slide-enter,
+.slide-leave-to {
   transform: translate3d(30%, 0, 0);
   opacity: 0;
 }
@@ -196,7 +194,7 @@ export default {
     z-index: 100;
     .back {
       position: absolute;
-      top: 13px;
+      top: 15px;
       left: 4px;
       .fa-angle-left {
         padding: 5px 10px;
@@ -208,7 +206,7 @@ export default {
       left: 38px;
       line-height: 44px;
       font-size: $font-size-medium-x;
-      @include no-wrap()
+      @include no-wrap();
     }
   }
   .list {
@@ -256,7 +254,7 @@ export default {
         padding: 41px 0 20px 0;
         border-radius: 10px;
         position: relative;
-        top:-20px;
+        top: -20px;
         background: $color-background;
         .sequence-play {
           position: absolute;
@@ -285,5 +283,4 @@ export default {
     }
   }
 }
-
 </style>

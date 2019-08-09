@@ -1,5 +1,11 @@
-import {playMode} from 'common/js/config'
-import {loadSearch, loadPlay, loadFavorite} from 'common/js/cache'
+import {
+  playMode
+} from 'common/js/config'
+import {
+  loadSearch,
+  loadPlay,
+  loadFavorite
+} from 'common/js/cache'
 
 const state = {
   musicList: {},
@@ -8,13 +14,13 @@ const state = {
   playing: false,
   // 全屏
   fullScreen: false,
-  playlist: [],
   // 顺序列表
-  sequenceList: [],
+  playlist: [],
   // 播放模式
-  mode: playMode.sequence,
+  sequenceList: [],
   // 当前播放索引
   currentIndex: -1,
+  mode: playMode.sequence,
   disc: {},
   topList: {},
   searchHistory: loadSearch(),

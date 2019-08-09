@@ -16,6 +16,7 @@
     "better-scroll": "^1.15.2",
     "fastclick": "^1.0.6",
     "good-storage": "^1.1.0",
+    "lyric-parser": "^1.0.1",
     "pinyin": "^2.9.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",

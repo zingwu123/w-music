@@ -1,5 +1,6 @@
-
-import {getSong} from 'api/song'
+import {
+  getSong
+} from 'api/song'
 
 export const musicList = state => state.musicList
 
