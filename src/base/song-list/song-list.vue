@@ -1,14 +1,19 @@
 <template>
   <div class="song-list">
-   <ul>
-     <li v-for="(song, index) in songs" :key="song.id" class="item" @click="selectItem(song, index)">
-       <p class="count">{{index + 1}}</p>
-       <div class="content">
-         <h2 class="name">{{song.name}}</h2>
-         <p class="desc">{{getDesc(song)}}</p>
-       </div>
-     </li>
-   </ul>
+    <ul>
+      <li
+        v-for="(song, index) in songs"
+        :key="song.id"
+        class="item"
+        @click="selectItem(song, index)"
+      >
+        <p class="count">{{index + 1}}</p>
+        <div class="content">
+          <h2 class="name">{{song.name}}</h2>
+          <p class="desc">{{getDesc(song)}}</p>
+        </div>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -19,14 +24,14 @@ export default {
       type: Array
     }
   },
-  computed: {
-  },
+  computed: {},
   methods: {
-    selectItem (item, index) {
+    selectItem(item, index) {
       this.$emit('select', item, index)
     },
-    getDesc (song) {
+    getDesc(song) {
       if (song.aliaName) {
+        // 如果有外国名
         return `${song.singer} - ${song.aliaName}`
       } else {
         return `${song.singer}`

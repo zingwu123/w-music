@@ -90,6 +90,7 @@
           <h2 class="name" v-html="currentSong.name"></h2>
           <div class="desc" v-html="currentSong.singer"></div>
         </div>
+         <!-- @click.stop阻止togglePlaying这个点击事件冒泡到父元素 -->
         <div class="control" @click.stop="togglePlaying">
           <i class="iconfont icon-play" :class="miniIcon"></i>
         </div>
@@ -124,7 +125,6 @@ import { shuffle } from 'common/js/utl'
 export default {
   data() {
     return {
-      // id: '',
       url: '',
       songReady: false,
       currentTime: 0,
@@ -142,6 +142,7 @@ export default {
     this.move = false
   },
   computed: {
+    // 切换播放模式图标
     iconMode() {
       if (this.mode === playMode.sequence) {
         return 'icon-listloop'
@@ -157,6 +158,7 @@ export default {
     miniIcon() {
       return this.playing ? 'icon-pause' : 'icon-play'
     },
+    // 切换播放暂停图标
     playIcon() {
       return this.playing ? 'icon-pause' : 'icon-play'
     },
@@ -181,6 +183,7 @@ export default {
   },
   watch: {
     currentSong(newVal, oldVal) {
+      // 歌曲id不变，就不切换暂停与播放
       if (!newVal.id) {
         return
       }
@@ -194,12 +197,6 @@ export default {
     url(newUrl) {
       this._getLyric(this.currentSong.id)
       this.$refs.audio.src = newUrl
-      // let play = setInterval(() => {
-      //   if (this.songReady) {
-      //     this.$refs.audio.play()
-      //     clearInterval(play)
-      //   }
-      // }, 20)
       let stop = setInterval(() => {
         this.duration = this.$refs.audio.duration
         if (this.duration) {
@@ -250,7 +247,7 @@ export default {
       return index > -1
     },
     changeMode() {
-      const mode = (this.mode + 1) % 3
+      const mode = (this.mode + 1) % 3 // 改变播放模式
       this.setPlayMode(mode)
       let list = null
       if (mode === playMode.random) {
@@ -261,6 +258,7 @@ export default {
       this._resetCurrentIndex(list)
       this.setPlaylist(list)
     },
+    // 保证切换播放模式当前播放歌曲不变
     _resetCurrentIndex(list) {
       let index = list.findIndex(item => {
         return item.id === this.currentSong.id
@@ -287,16 +285,18 @@ export default {
         this.currentLyric.seek(currentTime * 1000)
       }
     },
+    // 实时监测播放进度
     updateTime(e) {
       if (this.move) {
         return
       }
       this.currentTime = e.target.currentTime
     },
+    // 更改歌曲播放时间格式
     format(interval) {
       interval = interval | 0
-      let minute = (interval / 60) | 0
-      let second = interval % 60
+      let minute = (interval / 60) | 0 // 获得分钟数
+      let second = interval % 60 // 获得秒数
       if (second < 10) {
         second = '0' + second
       }
@@ -336,7 +336,6 @@ export default {
           index = 0
         }
         this.setCurrentIndex(index)
-        // this.$refs.audio.play()
         if (!this.playing) {
           this.togglePlaying()
         }
@@ -358,10 +357,12 @@ export default {
       }
       this.songReady = false
     },
+    // 切换到mini播放器
     back() {
       this.setFullScreen(false)
       this.currentShow = 'cd'
     },
+    // 切换到normal播放器
     open() {
       this.setFullScreen(true)
     },

@@ -32,6 +32,7 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
+    // 配置别名，简化路径写法
     alias: {
       'src': resolve('src'),
       'common': resolve('src/common'),

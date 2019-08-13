@@ -1,3 +1,4 @@
+// 添加dom对象到class中
 export function addClass (el, className) {
   if (hasClass(el, className)) {
     return
@@ -7,6 +8,7 @@ export function addClass (el, className) {
   el.className = newClass.join(' ')
 }
 
+// 检测dom对象是否在class中
 export function hasClass (el, className) {
   let reg = new RegExp('(^|\\s)' + className + '(\\s|$)')
   return reg.test(el.className)

@@ -20,6 +20,7 @@ export default new Router({
   {
     path: '/recommend',
     component: Recommend,
+    // 配置子路由
     children: [{
       path: ':id',
       component: MusicList

@@ -1,14 +1,12 @@
 <template>
   <div class="search-box">
-    <!-- <i class="icon-search"></i> -->
-    <input :placeholder="placeholder" v-model="query" type="text" class="box">
+    <input :placeholder="placeholder" v-model="query" type="text" class="box" />
     <i v-show="query" class="iconfont icon-delete" @click="clear"></i>
-    <!-- <span class="search" >{{clickInfo}}</span> -->
   </div>
 </template>
 
 <script>
-import {debounce} from 'common/js/utl'
+import { debounce } from 'common/js/utl'
 
 export default {
   props: {
@@ -17,22 +15,25 @@ export default {
       default: '搜索歌曲、歌手'
     }
   },
-  data () {
+  data() {
     return {
       query: '',
       clickInfo: '搜索'
     }
   },
-  created () {
-    this.$watch('query', debounce((newQuery) => {
-      this.$emit('query', newQuery)
-    }, 300))
+  created() {
+    this.$watch(
+      'query',
+      debounce(newQuery => {
+        this.$emit('query', newQuery)
+      }, 300)
+    )
   },
   methods: {
-    clear () {
+    clear() {
       this.query = ''
     },
-    setQuery (query) {
+    setQuery(query) {
       this.query = query
     }
   }
@@ -40,10 +41,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import "~common/scss/variable";
+@import "~common/scss/variable";
 
 .search-box {
-  // position: relative;
   display: flex;
   align-items: center;
   box-sizing: border-box;

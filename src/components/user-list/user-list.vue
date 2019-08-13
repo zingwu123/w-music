@@ -24,9 +24,6 @@
         </div>
       </scroll>
     </div>
-    <div class="no-result-wrapper" v-show="noResult">
-      <no-result :title="noResultDesc"></no-result>
-    </div>
   </div>
 </transition>
 </template>
@@ -34,7 +31,6 @@
 <script>
 import Switches from 'base/switches/switches'
 import {mapGetters, mapActions} from 'vuex'
-import NoResult from 'base/no-result/no-result'
 import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'
 // import {playlistMixin} from 'common/js/mixin'
@@ -103,8 +99,7 @@ export default {
   components: {
     Switches,
     SongList,
-    Scroll,
-    NoResult
+    Scroll
   }
 }
 </script>
@@ -174,9 +169,6 @@ export default {
       // width: 100%;
       height: 100%;
     }
-  }
-  .no-result-wrapper {
-    margin-top: 60%;
   }
 }
 </style>

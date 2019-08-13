@@ -98,16 +98,20 @@ export default {
       this.$refs.list.$el.style.bottom = bottom
       this.$refs.list.refresh()
     },
+    // 从歌手页获取到歌手详情
     _getDetail() {
+      // 如果singer.id不对，就返回singer页面
       if (!this.singer.id) {
         this.$router.push('/singer')
       }
       getSingerDetail(this.singer.id).then(res => {
         if (res.status === ERR_OK) {
+          // 获取该歌手的热门歌曲
           this.node = res.data.hotSongs
         }
       })
     },
+    // 对歌手详情数据进行规范化
     _normalizeSongs(list) {
       let ret = []
       list.forEach(item => {

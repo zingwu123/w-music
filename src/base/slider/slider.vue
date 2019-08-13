@@ -4,8 +4,12 @@
       <slot></slot>
     </div>
     <div class="dots">
-        <span class="dot" v-for="(item, index) in dots"
-      :key="index" :class="{'active' : currentPageIndex === index}"></span>
+      <span
+        class="dot"
+        v-for="(item, index) in dots"
+        :key="index"
+        :class="{'active' : currentPageIndex === index}"
+      ></span>
     </div>
   </div>
 </template>
@@ -37,6 +41,7 @@ export default {
       default: 4000
     }
   },
+  // 保证先执行setTimeout()这个函数
   mounted() {
     setTimeout(() => {
       this._setSliderWidth()
@@ -44,7 +49,7 @@ export default {
       this._initSlider()
       this._onScrollEnd()
     }, 20)
-    //  大小切换刷新图片大小
+    //  浏览器大小切换刷新图片大小
     window.addEventListener('resize', () => {
       if (!this.slider) {
         return
@@ -58,11 +63,11 @@ export default {
       this.children = this.$refs.sliderGroup.children // 获取轮播图张数
 
       let width = 0
-      let sliderWidth = this.$refs.slider.clientWidth
+      let sliderWidth = this.$refs.slider.clientWidth //  获取父元素宽度
       for (let i = 0; i < this.children.length; i++) {
         let child = this.children[i]
-        addClass(child, 'slider-item') // 添加轮播图信息
-        child.style.width = sliderWidth + 'px'
+        addClass(child, 'slider-item') // 添加轮播图信息到slider-item
+        child.style.width = sliderWidth + 'px' //   设定轮播图宽度
         width += sliderWidth
       }
       if (this.loop && !isResize) {
@@ -72,7 +77,7 @@ export default {
     },
     // 设置轮播小圆点
     _initDots() {
-      this.dots = new Array(this.children.length)
+      this.dots = new Array(this.children.length) // 小圆点数等于图片数
     },
     // slider初始化
     _initSlider() {
@@ -93,14 +98,14 @@ export default {
       })
       this.slider.on('scrollEnd', this._onScrollEnd)
     },
-    _onScrollEnd () {
-      let pageIndex = this.slider.getCurrentPage().pageX
+    _onScrollEnd() {
+      let pageIndex = this.slider.getCurrentPage().pageX // 获取轮播到第几张图
       this.currentPageIndex = pageIndex
       if (this.autoPlay) {
         this._play()
       }
     },
-    // 设置自动播放
+    // 设置自动轮播
     _play() {
       clearTimeout(this.timer) //   防止手动轮播与自动轮播冲突
       this.timer = setTimeout(() => {

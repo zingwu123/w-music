@@ -11,6 +11,7 @@ function findIndex (list, song) {
   })
 }
 
+// 选择歌曲播放时mutation的初值
 export const selectPlay = function ({commit, state}, {list, index}) {
   commit(types.SET_SEQUENCE_LIST, list)
   // 如果播放模式为随机

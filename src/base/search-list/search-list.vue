@@ -19,10 +19,10 @@ export default {
     }
   },
   methods: {
-    selectItem (item) {
+    selectItem(item) {
       this.$emit('select', item)
     },
-    deleteOne (item) {
+    deleteOne(item) {
       this.$emit('delete', item)
     }
   }
@@ -39,10 +39,12 @@ export default {
     height: 35px;
     overflow: hidden;
     font-size: 14px;
-    &.list-enter-active, &.list-leave-active {
+    &.list-enter-active,
+    &.list-leave-active {
       transition: all 0.1s;
     }
-    &.list-enter, &.list-leave-to {
+    &.list-enter,
+    &.list-leave-to {
       height: 0;
     }
     .text {

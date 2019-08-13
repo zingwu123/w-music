@@ -1,10 +1,12 @@
 <template>
   <ul class="switches">
-    <li class="switch-item"
-    v-for="(item, index) in switches"
-    :key="item.id"
-    :class="{'active': currentIndex === index}"
-    @click="switchItem(index)">
+    <li
+      class="switch-item"
+      v-for="(item, index) in switches"
+      :key="item.id"
+      :class="{'active': currentIndex === index}"
+      @click="switchItem(index)"
+    >
       <span>{{item.name}}</span>
     </li>
   </ul>
@@ -22,7 +24,7 @@ export default {
     }
   },
   methods: {
-    switchItem (index) {
+    switchItem(index) {
       this.$emit('switch', index)
     }
   }
@@ -30,27 +32,27 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import "~common/scss/variable";
+@import "~common/scss/variable";
 
-  .switches {
-    display: flex;
-    align-items: center;
-    width: 240px;
-    margin: 0 auto;
-    // border-radius: 5px;
-    .switch-item {
-      flex: 1;
-      padding: 8px;
-      margin: 0 20px;
-      text-align: center;
-      font-size: $font-size-medium;
-      color: $color-text-l;
-      border-bottom: 2px solid $color-theme;
-      &.active {
-        border-bottom: 2px solid $color-text-l;
-        // background: $color-highlight-background;
-        color: #fff;
-      }
+.switches {
+  display: flex;
+  align-items: center;
+  width: 240px;
+  margin: 0 auto;
+  // border-radius: 5px;
+  .switch-item {
+    flex: 1;
+    padding: 8px;
+    margin: 0 20px;
+    text-align: center;
+    font-size: $font-size-medium;
+    color: $color-text-l;
+    border-bottom: 2px solid $color-theme;
+    &.active {
+      border-bottom: 2px solid $color-text-l;
+      // background: $color-highlight-background;
+      color: #fff;
     }
   }
+}
 </style>

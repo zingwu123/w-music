@@ -2,8 +2,10 @@
   <div class="recommend" ref="recommend">
     <scroll class="recommend-content" ref="scroll" :data="playList">
       <div>
+        <!-- v-if是当banner.length>0时，才会显示轮播图组件，避免无组件内容就进行渲染-->
         <div v-if="banner.length" class="slider-wrapper">
           <slider>
+            <!-- :=v-bind 动态更新dom @=v-on 监听dom事件 -->
             <div v-for="item in banner" :key="item.id" @click.stop="selectBanner(item)">
               <img :src="item.imageUrl" />
             </div>
@@ -15,7 +17,7 @@
             <li class="item" v-for="item in playList" :key="item.id">
               <div class="icon"  @click="selectList(item)">
                 <div class="gradients"></div>
-                <img :src="item.picUrl"/>
+                <img v-lazy="item.picUrl" :key="item.picUrl"/>
               </div>
               <p class="play-count">
                 <i class="iconfont icon-listeningvolume"></i>
@@ -28,11 +30,11 @@
           </ul>
         </div>
         <div class="recommend-song" ref="recommendSong">
-          <h1 class="title">推荐歌曲</h1>
+          <h1 class="title">新歌推荐</h1>
           <ul>
             <li class="item" v-for="item in recommendMusic" :key="item.id"  @click="selectSong(item)">
               <div class="icon">
-                <img :src="item.image"/>
+                <img v-lazy="item.image"/>
               </div>
               <p class="text">{{item.name}}</p>
               <p class="singer">{{item.singer}}</p>
@@ -67,6 +69,11 @@ export default {
     Slider,
     Scroll
   },
+  beforeMount() {
+    this.$Lazyload.config({
+      loading: require('common/image/default.png')
+    })
+  },
   created() {
     // 调用这三个函数
     this._getBanner()
@@ -80,7 +87,6 @@ export default {
         if (res.status === ERR_OK) {
           let data = res.data.banners
           this.banner = data
-          this.banner = data.splice(4)
         } else {
           console.error('Banner 获取失败')
         }
@@ -114,12 +120,6 @@ export default {
     },
     // 添加轮播图对应音乐到播放器
     selectBanner(item) {
-      // let regHttp = /^http/
-      // let regSong = /\/song\/?id/
-      // if (regHttp.test(item.url)) {
-      //   window.open(item.url)
-      // }
-      // if (regSong.test(item.url)) {
       if (item.url) {
         window.open(item.url)
       } else {
@@ -243,7 +243,7 @@ export default {
       text-align: center;
       .title {
         height: 40px;
-        line-height: 40px;
+        line-height: 50px;
         text-align: center;
         font-size: $font-size-medium;
         font-weight: bold;

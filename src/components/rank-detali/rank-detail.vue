@@ -19,7 +19,6 @@
           <div class="filter"></div>
           <div class="text">
             <h2 class="list-title">
-              <!-- <p class="music">云音乐</p> -->
               {{title}}
             </h2>
             <p class="update">{{updateTime}}</p>

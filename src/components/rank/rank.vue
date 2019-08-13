@@ -4,7 +4,7 @@
       <ul>
         <li class="item"  v-for="item in yunTopList" :key="item.id" @click="selectItem(item)">
           <div class="icon">
-            <img :src="item.coverImgUrl" width="100" height="100">
+            <img v-lazy="item.coverImgUrl" width="100" height="100">
           </div>
           <ul class="songlist">
             <li class="song" v-for="(song, index) in item.top" :key="index">
@@ -14,8 +14,6 @@
           </ul>
         </li>
       </ul>
-      <div v-show="showLoading" class="loading-content">
-      </div>
     </scroll>
     <router-view></router-view>
   </div>
@@ -27,7 +25,7 @@ import Scroll from 'base/scroll/scroll'
 import {playlistMixin} from 'common/js/mixin'
 import {mapMutations} from 'vuex'
 
-const YUNMUSIC_TOP = [0, 1, 2, 3, 4, 22, 23]
+const YUNMUSIC_TOP = [0, 1, 2, 3, 6, 7, 18]
 
 export default {
   mixins: [playlistMixin],
@@ -36,6 +34,11 @@ export default {
       yunTopList: [],
       showLoading: true
     }
+  },
+  beforeMount() {
+    this.$Lazyload.config({
+      loading: require('common/image/default.png')
+    })
   },
   created () {
     this._getTopList()
@@ -121,18 +124,6 @@ export default {
         }
       }
     }
-    .loading-container {
-      position: absolute;
-      width: 100%;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-  }
-  .loading-content {
-    position: fixed;
-    width: 100%;
-    top: 70%;
-    transform: translateY(-50%);
   }
 }
 </style>

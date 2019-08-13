@@ -28,6 +28,7 @@ export const playHistory = state => state.playHistory
 
 export const favoriteList = state => state.favoriteList
 
+// 从歌曲列表中直接获取歌曲
 export const currentSong = (state) => {
   return state.playlist[state.currentIndex] || {}
 }

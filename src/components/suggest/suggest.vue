@@ -97,11 +97,6 @@ export default {
       })
       this.$emit('select')
     },
-    // handlePlaylist (playlist) {
-    //   const bottom = playlist.length > 0 ? '90px' : ''
-    //   this.$refs.suggestList.style['margin-bottom'] = bottom
-    //   this.$emit('refresh')
-    // },
     search () {
       this.searchShow = false
       this.haveMore = true

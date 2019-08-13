@@ -68,6 +68,7 @@ export default {
     this.listenScroll = true
   },
   mounted () {
+    // 获取背景图高度，方便设置全局高度
     this.imageHeight = this.$refs.bgImage.clientHeight
     this.minTranslateY = -this.imageHeight + RESERVED_HEIGHT
   },

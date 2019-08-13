@@ -16,7 +16,7 @@
             class="list-group-item"
             :key="item.id"
           >
-            <img :src="item.avatar" class="avatar" />
+            <img v-lazy="item.avatar" class="avatar" />
             <span class="name">{{ item.name }}</span>
           </li>
         </ul>
@@ -50,7 +50,9 @@ export default {
   props: {
     data: {
       type: Array,
-      default: function() { return [] }
+      default: function() {
+        return []
+      }
     }
   },
   data() {
@@ -65,7 +67,13 @@ export default {
     this.listHeight = []
     this.probeType = 3
   },
+  beforeMount() {
+    this.$Lazyload.config({
+      loading: require('common/image/default.png')
+    })
+  },
   methods: {
+    // 派发点击事件
     selectItem(item) {
       this.$emit('select', item)
     },
@@ -137,6 +145,7 @@ export default {
     }
   },
   computed: {
+    // 左侧快速入口
     shortcutList() {
       return this.data.map(group => {
         return group.title.substr(0, 1)

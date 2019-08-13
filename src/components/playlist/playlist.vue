@@ -9,7 +9,7 @@
               (<span class="count">{{playlist.length}}</span>)
             </span>
             <span class="clear" @click="showConfirm">
-              <i class="icon-clear"></i>
+              <i class="iconfont icon-clear"></i>
             </span>
           </h1>
         </div>
@@ -21,7 +21,7 @@
               <i class="current fa" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>
               <span class="delete" @click.stop="deletOne(item)">
-                <i class="icon-delete"></i>
+                <i class="iconfont icon-delete"></i>
               </span>
             </li>
           </transition-group>
@@ -55,9 +55,9 @@ export default {
     },
     iconMode () {
       if (this.mode === playMode.sequence) {
-        return 'icon-next'
+        return 'icon-listloop'
       } else if (this.mode === playMode.loop) {
-        return 'icon-loop'
+        return 'icon-singlecycle'
       } else {
         return 'icon-random'
       }
@@ -213,6 +213,7 @@ export default {
           }
           .clear {
             @include extend-click();
+            left: 8px;
             .icon-clear {
               font-size: $font-size-medium;
               color: $color-text-g;

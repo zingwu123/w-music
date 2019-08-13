@@ -30,23 +30,23 @@ export default {
       default: '取消'
     }
   },
-  data () {
+  data() {
     return {
       showFlag: false
     }
   },
   methods: {
-    show () {
+    show() {
       this.showFlag = true
     },
-    hide () {
+    hide() {
       this.showFlag = false
     },
-    cancel () {
+    cancel() {
       this.hide()
       this.$emit('cancel')
     },
-    confirm () {
+    confirm() {
       this.hide()
       this.$emit('confirm')
     }
@@ -55,77 +55,77 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import "~common/scss/variable";
+@import "~common/scss/variable";
 
-  .confirm {
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 998;
-    background-color: rgba(0, 0, 0, 0.3);
-    &.confirm-fade-enter-active {
-      animation: confirm-fadein 0.3s;
-      .confirm-content {
-        animation: confirm-zoom 0.3s;
-      }
+.confirm {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 998;
+  background-color: rgba(0, 0, 0, 0.3);
+  &.confirm-fade-enter-active {
+    animation: confirm-fadein 0.3s;
+    .confirm-content {
+      animation: confirm-zoom 0.3s;
     }
-    .confirm-wrapper {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 999;
-      .confirm-content {
-        width: 270px;
-        border-radius: 5px;
-        background: $color-background;
-        .text {
-          padding: 12px 15px;
+  }
+  .confirm-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+    .confirm-content {
+      width: 270px;
+      border-radius: 5px;
+      background: $color-background;
+      .text {
+        padding: 12px 15px;
+        line-height: 22px;
+        text-align: center;
+        font-size: $font-size-medium-x;
+        color: $color-text;
+      }
+      .operate {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        font-size: $font-size-medium-x;
+        .operate-btn {
+          flex: 1;
           line-height: 22px;
-          text-align: center;
-          font-size: $font-size-medium-x;
-          color: $color-text;
-        }
-        .operate {
-          display: flex;
-          align-items: center;
-          text-align: center;
-          font-size: $font-size-medium-x;
-          .operate-btn {
-            flex: 1;
-            line-height: 22px;
-            padding: 12px 0;
-            border-top: 1px solid $color-background;
-            color: $color-theme;
-            &.left {
-              border-right: 1px solid $color-background;
-            }
+          padding: 12px 0;
+          border-top: 1px solid $color-background;
+          color: $color-theme;
+          &.left {
+            border-right: 1px solid $color-background;
           }
         }
       }
     }
   }
+}
 
-  @keyframes confirm-fadein {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
+@keyframes confirm-fadein {
+  0% {
+    opacity: 0;
   }
+  100% {
+    opacity: 1;
+  }
+}
 
-  @keyframes confirm-zoom {
-    0% {
-      transform: scale(0);
-    }
-    50% {
-      transform: scale(1.1);
-    }
-    100% {
-      transform: scale(1);
-    }
+@keyframes confirm-zoom {
+  0% {
+    transform: scale(0);
   }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 </style>

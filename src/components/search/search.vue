@@ -9,9 +9,12 @@
         <div ref="search">
           <div class="search-hots" v-show="!query">
             <p class="title">热门搜索</p>
-            <span class="search-hots-item" v-for="item in hots" :key="item.id" @click="addQuery(item.first)">
-              {{item.first}}
-            </span>
+            <span
+              class="search-hots-item"
+              v-for="item in hots"
+              :key="item.id"
+              @click="addQuery(item.first)"
+            >{{item.first}}</span>
           </div>
           <div class="shortcut-wrapper" v-show="!query">
             <div class="search-history" v-show="searchHistory.length">
@@ -21,7 +24,11 @@
                   <i class="iconfont icon-clear"></i>
                 </span>
               </h1>
-              <search-list @select=addQuery @delete="deleteSearchHistory" :searches="searchHistory"></search-list>
+              <search-list
+                @select="addQuery"
+                @delete="deleteSearchHistory"
+                :searches="searchHistory"
+              ></search-list>
             </div>
           </div>
           <div class="search-result">
@@ -40,52 +47,52 @@ import Scroll from 'base/scroll/scroll'
 import SearchBox from 'base/search-box/search-box'
 import Suggest from 'components/suggest/suggest'
 import Confirm from 'base/confirm/confirm'
-import {searchMixin, playlistMixin} from 'common/js/mixin'
-import {getSearchHot} from 'api/search'
+import { searchMixin, playlistMixin } from 'common/js/mixin'
+import { getSearchHot } from 'api/search'
 import SearchList from 'base/search-list/search-list'
 
 export default {
   mixins: [searchMixin, playlistMixin],
-  data () {
+  data() {
     return {
       pullup: true,
       hots: []
     }
   },
-  created () {
+  created() {
     this._getSearchHot()
   },
   methods: {
-    back () {
+    back() {
       this.$router.back()
       this.$refs.searchBox.clear()
     },
-    showConfirm () {
+    showConfirm() {
       this.$refs.confirm.show()
     },
-    _getSearchHot () {
-      getSearchHot().then((res) => {
+    _getSearchHot() {
+      getSearchHot().then(res => {
         this.hots = res.data.result.hots
       })
     },
-    onQueryChange (query) {
+    onQueryChange(query) {
       this.query = query
     },
-    addQuery (query) {
+    addQuery(query) {
       this.$refs.searchBox.setQuery(query)
     },
-    saveSearch () {
+    saveSearch() {
       this.saveSearchHistory(this.query)
     },
-    searchMore () {
+    searchMore() {
       this.$refs.suggest.searchMore()
     },
-    refresh () {
+    refresh() {
       setTimeout(() => {
         this.$refs.scroll.refresh()
       }, 20)
     },
-    handlePlaylist (playlist) {
+    handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
       this.$refs.searchWrapper.style.bottom = bottom
       this.refresh()
@@ -105,10 +112,12 @@ export default {
 @import "~common/scss/variable";
 @import "~common/scss/mixin";
 
-.search-enter-active, .search-leave-active {
+.search-enter-active,
+.search-leave-active {
   transition: all 0.3s;
 }
-.search-enter, .search-leave-to {
+.search-enter,
+.search-leave-to {
   transform: translate3d(50%, 0, 0);
   opacity: 0;
 }
@@ -141,7 +150,7 @@ export default {
         padding: 15px 5px 0 5px;
         height: 30px;
         line-height: 30px;
-        font-size:$font-size-small-x;
+        font-size: $font-size-small-x;
         color: $color-text-g;
       }
       span {
