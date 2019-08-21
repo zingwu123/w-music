@@ -211,7 +211,7 @@ export default {
     font-family: Helvetica;
     .item {
       padding: 5px 5px;
-      line-height: 1;
+      line-height: 0.8;
       color: $color-text-g;
       font-size: $font-size-small;
       font-weight: bold;
