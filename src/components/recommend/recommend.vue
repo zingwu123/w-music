@@ -15,9 +15,9 @@
           <h1 class="title">推荐歌单</h1>
           <ul>
             <li class="item" v-for="item in playList" :key="item.id">
-              <div class="icon"  @click="selectList(item)">
+              <div class="icon" @click="selectList(item)">
                 <div class="gradients"></div>
-                <img v-lazy="item.picUrl" :key="item.picUrl"/>
+                <img v-lazy="item.picUrl" :key="item.picUrl" />
               </div>
               <p class="play-count">
                 <i class="iconfont icon-listeningvolume"></i>
@@ -32,9 +32,14 @@
         <div class="recommend-song" ref="recommendSong">
           <h1 class="title">新歌推荐</h1>
           <ul>
-            <li class="item" v-for="item in recommendMusic" :key="item.id"  @click="selectSong(item)">
+            <li
+              class="item"
+              v-for="item in recommendMusic"
+              :key="item.id"
+              @click="selectSong(item)"
+            >
               <div class="icon">
-                <img v-lazy="item.image"/>
+                <img v-lazy="item.image" />
               </div>
               <p class="text">{{item.name}}</p>
               <p class="singer">{{item.singer}}</p>
@@ -48,14 +53,14 @@
 </template>
 
 <script>
-import Scroll from 'base/scroll/scroll'
-import Slider from 'base/slider/slider'
-import { ERR_OK } from 'common/js/config'
-import { getBanner, getRecommendList, getRecommendMusic } from 'api/recommend'
-import { createRecommendSong } from 'common/js/song'
-import { getSongDetail } from 'api/search'
-import { mapMutations, mapActions } from 'vuex'
-import { playlistMixin } from 'common/js/mixin'
+import Scroll from "base/scroll/scroll";
+import Slider from "base/slider/slider";
+import { ERR_OK } from "common/js/config";
+import { getBanner, getRecommendList, getRecommendMusic } from "api/recommend";
+import { createRecommendSong } from "common/js/song";
+import { getSongDetail } from "api/search";
+import { mapMutations, mapActions } from "vuex";
+import { playlistMixin } from "common/js/mixin";
 export default {
   mixins: [playlistMixin],
   data() {
@@ -63,7 +68,7 @@ export default {
       banner: [], // 初始化轮播图
       playList: [], // 初始化推荐歌单
       recommendMusic: [] // 初始化推荐音乐
-    }
+    };
   },
   components: {
     Slider,
@@ -71,95 +76,95 @@ export default {
   },
   beforeMount() {
     this.$Lazyload.config({
-      loading: require('common/image/default.png')
-    })
+      loading: require("common/image/default.png")
+    });
   },
   created() {
     // 调用这三个函数
-    this._getBanner()
-    this._getRecommendList()
-    this._getRecommendMusic()
+    this._getBanner();
+    this._getRecommendList();
+    this._getRecommendMusic();
   },
   methods: {
     //  获取轮播图数据并存储到banner
     _getBanner() {
       getBanner().then(res => {
         if (res.status === ERR_OK) {
-          let data = res.data.banners
-          this.banner = data
+          let data = res.data.banners;
+          this.banner = data;
         } else {
-          console.error('Banner 获取失败')
+          console.error("Banner 获取失败");
         }
-      })
+      });
     },
     //  获取推荐歌单数据并存储到playList
     _getRecommendList() {
       getRecommendList().then(res => {
         if (res.status === ERR_OK) {
-          this.playList = res.data.result
+          this.playList = res.data.result;
         } else {
-          console.error('推荐歌单获取失败')
+          console.error("推荐歌单获取失败");
         }
-      })
+      });
     },
     //  获取推荐音乐数据并存储到recommendMusic
     _getRecommendMusic() {
       getRecommendMusic().then(res => {
         if (res.status === ERR_OK) {
           let list = res.data.result.map(item => {
-            return createRecommendSong(item)
+            return createRecommendSong(item);
             // map() 方法返回一个新数组，数组中的元素为原始数组元素调用函数处理后的值
             // map() 方法按照原始数组元素顺序依次处理元素
-          })
-          list.splice(9) // splice() 方法向/从数组中添加/删除项目，然后返回被删除的项目。
-          this.recommendMusic = list
+          });
+          list.splice(9); // splice() 方法向/从数组中添加/删除项目，然后返回被删除的项目。
+          this.recommendMusic = list;
         } else {
-          console.error('getRecommendMusic 获取失败')
+          console.error("getRecommendMusic 获取失败");
         }
-      })
+      });
     },
     // 添加轮播图对应音乐到播放器
     selectBanner(item) {
       if (item.url) {
-        window.open(item.url)
+        window.open(item.url);
       } else {
         getSongDetail(item.targetId).then(res => {
           if (res.status === ERR_OK) {
-            let m = res.data.songs[0]
+            let m = res.data.songs[0];
             let song = {
               id: m.id,
               singer: m.ar[0].name,
               name: m.name,
               image: m.al.picUrl,
               album: m.al.name
-            }
-            this.insertSong(song)
-            this.setFullScreen(true)
+            };
+            this.insertSong(song);
+            this.setFullScreen(true);
           }
-        })
+        });
       }
     },
     selectSong(item) {
-      this.insertSong(item)
+      this.insertSong(item);
     },
     handlePlaylist(playlist) {
-      const bottom = playlist.length > 0 ? '60px' : ''
-      this.$refs.recommend.style.bottom = bottom
-      this.$refs.scroll.refresh()
+      const bottom = playlist.length > 0 ? "60px" : "";
+      this.$refs.recommend.style.bottom = bottom;
+      this.$refs.scroll.refresh();
     },
     selectList(item) {
       this.$router.push({
         path: `/recommend/${item.id}`
-      })
-      this.setMuiscList(item)
+      });
+      this.setMuiscList(item);
     },
     ...mapMutations({
-      setMuiscList: 'SET_MUSIC_LIST',
-      setFullScreen: 'SET_FULL_SCREEN'
+      setMuiscList: "SET_MUSIC_LIST",
+      setFullScreen: "SET_FULL_SCREEN"
     }),
-    ...mapActions(['insertSong'])
+    ...mapActions(["insertSong"])
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 @import "common/scss/variable.scss";
